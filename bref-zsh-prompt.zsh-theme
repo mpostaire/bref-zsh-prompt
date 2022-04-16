@@ -21,7 +21,7 @@ BREF_GIT_UNTRACKED=${BREF_GIT_UNTRACKED:-'%F{yellow}?'}
 BREF_GIT_MODIFIED=${BREF_GIT_MODIFIED:-'%F{yellow}!'}
 BREF_GIT_STASHED=${BREF_GIT_STASHED:-'%F{gray}*'}
 
-_bref_show_battery() {
+_bref_toggle_battery() {
     if [[ -n ${BREF_BATTERY_VISIBLE} ]]; then
         BREF_BATTERY_VISIBLE=
     else
@@ -31,8 +31,8 @@ _bref_show_battery() {
 
     zle && zle reset-prompt
 }
-zle -N _bref_show_battery
-bindkey "${BREF_SHOW_BATTERY_BINDING}" _bref_show_battery
+zle -N _bref_toggle_battery
+bindkey "${BREF_SHOW_BATTERY_BINDING}" _bref_toggle_battery
 
 # _bref_git_info taken and modified from https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
 # Echoes information about Git repository status when inside a Git repository
@@ -136,8 +136,8 @@ _bref_make_prompt() {
 
     ### RPROMPT ###
 
-    # put the battery status in rprompt if it is enabled or in virtual console
-    if [[ -n ${BREF_BATTERY_VISIBLE} || ${TERM} = "linux" ]]; then
+    # put the battery status in rprompt if it's present and enabled or in virtual console
+    if [[ -r /sys/class/power_supply/BAT0/capacity && ( -n ${BREF_BATTERY_VISIBLE} || ${TERM} = "linux" ) ]]; then
         local bat_capa=$(</sys/class/power_supply/BAT0/capacity)
         (( $(</sys/class/power_supply/AC/online) )) && local bat_charge=+ || local bat_charge=
         RPROMPT=" %F{yellow}[${bat_capa}${bat_charge}]%f"
