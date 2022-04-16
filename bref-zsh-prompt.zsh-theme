@@ -144,7 +144,7 @@ _bref_make_prompt() {
     if [[ -r /sys/class/power_supply/BAT0/capacity && ( $(<${_bref_zsh_prompt_path}/bref_battery_visible) -eq 1 || ${TERM} = "linux" ) ]]; then
         local bat_capa=$(</sys/class/power_supply/BAT0/capacity)
         (( $(</sys/class/power_supply/AC/online) )) && local bat_charge=+ || local bat_charge=
-        RPROMPT=" %F{yellow}[${bat_capa}${bat_charge}]%f"
+        RPROMPT=" %F{11}[${bat_capa}${bat_charge}]%f"
     else
         RPROMPT=''
     fi
