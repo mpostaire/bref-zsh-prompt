@@ -4,6 +4,8 @@ A simple zsh prompt. It shows the git status asynchronously, shows a ssh notific
 
 ![bref prompt](images/bref_prompt.png)
 
+The battery level visibility is toggleable using the `BREF_SHOW_BATTERY_BINDING` and is remembered for the next zsh sessions.
+
 ## Installation
 
 Source `bref-zsh-prompt.zsh-theme` in your .zshrc or use your favorite plugin manager.
@@ -12,7 +14,6 @@ Source `bref-zsh-prompt.zsh-theme` in your .zshrc or use your favorite plugin ma
 
 |VARIABLE|EFFECT|
 |-|-|
-|BREF_BATTERY_VISIBLE|Shows battery percentage in RPROMPT if set, hidden if unset (can be toggled on/off using the BREF_SHOW_BATTERY_BINDING keybinding)|
 |BREF_SHOW_BATTERY_BINDING|The keybinding used to toggle the battery indicator on/off. Default: '^B' (Ctrl+B).|
 |BREF_GIT_AHEAD|The icon to use for the git AHEAD status.|
 |BREF_GIT_BEHIND|The icon to use for the git BEHIND status.|

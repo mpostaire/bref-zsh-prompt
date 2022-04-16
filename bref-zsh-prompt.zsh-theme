@@ -10,8 +10,8 @@ autoload -U colors && colors # Enable colors in prompt
 # see: https://stackoverflow.com/questions/2187829/constantly-updated-clock-in-zsh-prompt
 
 # Get config
-BREF_BATTERY_VISIBLE=${BREF_BATTERY_VISIBLE:-}
 BREF_SHOW_BATTERY_BINDING=${BREF_SHOW_BATTERY_BINDING:-'^B'}
+
 # TODO I'm not sure about the colors of the icons below...
 BREF_GIT_AHEAD=${BREF_GIT_AHEAD:-'%F{red}⇡'}
 BREF_GIT_BEHIND=${BREF_GIT_BEHIND:-'%F{cyan}⇣'}
@@ -21,14 +21,18 @@ BREF_GIT_UNTRACKED=${BREF_GIT_UNTRACKED:-'%F{yellow}?'}
 BREF_GIT_MODIFIED=${BREF_GIT_MODIFIED:-'%F{yellow}!'}
 BREF_GIT_STASHED=${BREF_GIT_STASHED:-'%F{gray}*'}
 
+_bref_zsh_prompt_path=${0:A:h}
+if [[ ! -r ${_bref_zsh_prompt_path}/bref_battery_visible ]]; then
+    print '0' > ${_bref_zsh_prompt_path}/bref_battery_visible
+fi
+
 _bref_toggle_battery() {
-    if [[ -n ${BREF_BATTERY_VISIBLE} ]]; then
-        BREF_BATTERY_VISIBLE=
+    if [ $(<${_bref_zsh_prompt_path}/bref_battery_visible) -eq 0 ]; then
+        print '1' > ${_bref_zsh_prompt_path}/bref_battery_visible
     else
-        BREF_BATTERY_VISIBLE=1
+        print '0' > ${_bref_zsh_prompt_path}/bref_battery_visible
     fi
     _bref_make_prompt
-
     zle && zle reset-prompt
 }
 zle -N _bref_toggle_battery
@@ -137,7 +141,7 @@ _bref_make_prompt() {
     ### RPROMPT ###
 
     # put the battery status in rprompt if it's present and enabled or in virtual console
-    if [[ -r /sys/class/power_supply/BAT0/capacity && ( -n ${BREF_BATTERY_VISIBLE} || ${TERM} = "linux" ) ]]; then
+    if [[ -r /sys/class/power_supply/BAT0/capacity && ( $(<${_bref_zsh_prompt_path}/bref_battery_visible) -eq 1 || ${TERM} = "linux" ) ]]; then
         local bat_capa=$(</sys/class/power_supply/BAT0/capacity)
         (( $(</sys/class/power_supply/AC/online) )) && local bat_charge=+ || local bat_charge=
         RPROMPT=" %F{yellow}[${bat_capa}${bat_charge}]%f"
