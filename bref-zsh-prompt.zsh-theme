@@ -21,6 +21,12 @@ BREF_GIT_UNTRACKED=${BREF_GIT_UNTRACKED:-'%F{yellow}?'}
 BREF_GIT_MODIFIED=${BREF_GIT_MODIFIED:-'%F{yellow}!'}
 BREF_GIT_STASHED=${BREF_GIT_STASHED:-'%F{gray}*'}
 
+BREF_GIT_COLOR=${BREF_GIT_COLOR:-'%F{15}'}
+BREF_CODE_COLOR=${BREF_CODE_COLOR:-'%F{red}'}
+BREF_SSH_COLOR=${BREF_SSH_COLOR:-'%F{magenta}'}
+BREF_JOBS_COLOR=${BREF_JOBS_COLOR:-'%F{yellow}'}
+BREF_BATTERY_COLOR=${BREF_BATTERY_COLOR:-'%F{11}'}
+
 _bref_zsh_prompt_path=${0:A:h}
 if [[ ! -r ${_bref_zsh_prompt_path}/bref_battery_visible ]]; then
     print '0' > ${_bref_zsh_prompt_path}/bref_battery_visible
@@ -84,11 +90,11 @@ _bref_git_info() {
     fi
 
     local -a GIT_INFO
-    GIT_INFO+=( "%F{15}(${GIT_LOCATION}" )
+    GIT_INFO+=( "${BREF_GIT_COLOR}(${GIT_LOCATION}" )
     [ -n "${GIT_STATUS}" ] && GIT_INFO+=( "${GIT_STATUS}" )
     [[ ${#DIVERGENCES[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
     [[ ${#FLAGS[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)FLAGS}" )
-    print "${(j: :)GIT_INFO}%F{15})%f"
+    print "${(j: :)GIT_INFO}${BREF_GIT_COLOR})%f%b%u%s%k"
 }
 
 # Correct the prompt when PWD is big
@@ -135,7 +141,7 @@ _bref_make_prompt() {
 
     local current_path=$(_bref_format_path ${path_color} $(print -P %~))
     
-    PROMPT="%B%(?:%F{green}:%F{red})┌ %F{green}%n@%M${ssh_status}: ${current_path}
+    PROMPT="%B%(?:%F{green}:%F{red})┌ %F{green}%n@%M: ${current_path}
 %(?:%F{green}:%F{red})└ %(?:%F{green}%(#:#:$):%F{red}%(#:#:$))%f%b "
 
     ### RPROMPT ###
@@ -144,16 +150,16 @@ _bref_make_prompt() {
     if [[ -r /sys/class/power_supply/BAT0/capacity && ( $(<${_bref_zsh_prompt_path}/bref_battery_visible) -eq 1 || ${TERM} = "linux" ) ]]; then
         local bat_capa=$(</sys/class/power_supply/BAT0/capacity)
         (( $(</sys/class/power_supply/AC/online) )) && local bat_charge=+ || local bat_charge=
-        RPROMPT=" %F{11}[${bat_capa}${bat_charge}]%f"
+        RPROMPT=" ${BREF_BATTERY_COLOR}[${bat_capa}${bat_charge}]%f"
     else
         RPROMPT=''
     fi
     # put the return value in rprompt if it is > 0
-    RPROMPT='%(?:: %F{red}[%?]%f)'${RPROMPT}
+    RPROMPT="%(?:: ${BREF_CODE_COLOR}[%?]%f%b%u%s%k)${RPROMPT}"
     # put a ssh notification in rprompt if we are in a ssh session
-    [[ -n ${SSH_CONNECTION-}${SSH_CLIENT-}${SSH_TTY-} ]] && RPROMPT=' %F{magenta}(ssh)%f'${RPROMPT}
+    [[ -n ${SSH_CONNECTION-}${SSH_CLIENT-}${SSH_TTY-} ]] && RPROMPT=" ${BREF_SSH_COLOR}(ssh)%f%b%u%s%k${RPROMPT}"
     # put the number of running background jobs in rprompt if there are any
-    RPROMPT='%(1j: %F{yellow}%jj%f:)'${RPROMPT}
+    RPROMPT="%(1j: ${BREF_JOBS_COLOR}%jj%f:)${RPROMPT}"
 
     async() {
         # save to temp file
