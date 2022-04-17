@@ -13,9 +13,11 @@ Source `bref-zsh-prompt.zsh-theme` in your .zshrc or use your favorite plugin ma
 ## More pictures
 
 SSH notification if the session is remote.
+
 ![bref prompt ssh](images/bref_prompt_ssh.png)
 
 The left part expands when displaying a long path.
+
 ![bref prompt long path](images/bref_prompt_long_path.png)
 
 ## Configuration
