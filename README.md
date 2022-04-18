@@ -1,4 +1,4 @@
-# Bref zsh theme
+# Bref zsh prompt
 
 A simple zsh prompt. It shows the git status asynchronously, shows a ssh notification if the session is remote, the battery level and the ammount of background jobs.
 
