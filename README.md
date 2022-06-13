@@ -10,7 +10,7 @@ The battery level visibility is toggleable using the `BREF_SHOW_BATTERY_BINDING`
 
 Source `bref-zsh-prompt.zsh-theme` in your .zshrc or use your favorite plugin manager.
 
-## More pictures
+## More screenshots
 
 SSH notification if the session is remote.
 
